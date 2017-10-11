@@ -8,14 +8,13 @@ struct List{
     
     void create();
     
-    void create_number(char*, char*, char*);
-    Phone_node *create_person(char*);
+    Phone_node *create_person(char*, char*, char*);
     void close();
     void printList();
-    void insert(char*);
-    void remove(char*);
+    void insert(char*, char*, char*);
+    void remove(Phone_node *);
     Phone_node* search(char*);
-    int search2(char*);
+    int search2(char*, char*);
     void update(int, char*);
 };
 
