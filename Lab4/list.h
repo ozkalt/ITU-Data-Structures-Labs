@@ -15,7 +15,7 @@ struct List{
     void remove(Phone_node *);
     Phone_node* search(char*);
     int search2(char*, char*);
-    void update(int, char*);
+    void update(int, char*, char*);
 };
 
 #endif
