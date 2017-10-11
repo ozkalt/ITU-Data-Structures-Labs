@@ -136,7 +136,7 @@ int List::search2(char *target, char *targetlastname){
     
     while (traverse){
         counter++;
-        if (strncmp(target, traverse->name, strlen(traverse->name)) == 0 && strncmp(targetlastname, traverse->lastname, strlen(traverse->lastname))){
+        if (strncmp(target, traverse->name, strlen(traverse->name)) == 0 && strncmp(targetlastname, traverse->lastname, strlen(traverse->lastname)) == 0 ){
             found++;
         }
         traverse = traverse->next;
