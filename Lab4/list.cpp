@@ -45,7 +45,6 @@ Phone_node * List::create_person(char * name, char * lastname, char * num){
 
 void List::insert(char *newname, char *newlastname, char *newphonenum){
     Phone_node *traverse, *behind, *newperson;
-    number *newnum;
     traverse = head;
     behind = new Phone_node;
     
@@ -149,7 +148,7 @@ void List::update(int num, char *newname, char *newlastname){
     Phone_node *traverse;
     int counter = 1;
     traverse = head;
-    char num = new char[30];
+    char * number = new char[30];
     
     for (int i = 0; i < num; i++){
         traverse = traverse->next;
@@ -157,9 +156,9 @@ void List::update(int num, char *newname, char *newlastname){
     
     
     if (strcmp(traverse->name, newname) != 0){
-        strcpy(num, traverse->num);
-        remove(traverse->name);
-        insert(newname, newlastname, num);
+        strcpy(number, traverse->phonenum);
+        remove(traverse);
+        insert(newname, newlastname, number);
     }
 };
 
