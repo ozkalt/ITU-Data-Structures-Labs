@@ -128,7 +128,7 @@ void delete_record(){
         cout << "Record cannot be found. " << endl;
     }
     else {
-        book.remove(name);
+        book.remove(numpeople);
         cout << "Record has been deleted. " << endl;
     }
     getchar();
@@ -137,12 +137,17 @@ void delete_record(){
 void update_record(){
     char name[NAME_LENGTH];
     char updatename[NAME_LENGTH];
+    char lastname[NAME_LENGTH];
+    char updatelastname[NAME_LENGTH];
     
     cout << "Please enter the name of the person you want to update ('*' to list all):" << endl;
     cin.ignore(1000, '\n');
     cin.getline(name,NAME_LENGTH);
+    cout << "Please enter the last name of the person you want to update:" << endl;
+    cin.ignore(1000, '\n');
+    cin.getline(lastname,NAME_LENGTH);
     
-    int numpeople=book.search2(name);
+    int numpeople=book.search2(name,  lastname);
     
     if(numpeople == 0)
         cout << "Record can not be found." << endl;
@@ -151,7 +156,9 @@ void update_record(){
         cout << "Name : " ;
         cin.ignore(1000, '\n');
         cin.getline(updatename, NAME_LENGTH);
-        book.update(numpeople, updatename);
+        cout << "Last Name : " ;
+        cin.getline(updatelastname, NAME_LENGTH);
+        book.update(numpeople, updatename, updatelastname);
         cout << "Record has been updated successfully" <<endl;
     }
     getchar();
