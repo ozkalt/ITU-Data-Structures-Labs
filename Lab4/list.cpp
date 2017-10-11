@@ -16,71 +16,46 @@ void List::create(){
 
 void List::close(){
     Phone_node *p;
-    number *q;
     
     while (head){
         p = head;
         head = head->next;
-        q = p->phonenum;
-        
-        while (q){
-            p->phonenum = p->phonenum->next;
-            delete q;
-            q = p->phonenum;
-        }
         delete p;
     }
     nodecount = 0;
 };
 
 
-Phone_node * List::create_person(char * name){
+Phone_node * List::create_person(char * name, char * lastname, char * num){
     Phone_node * newperson;
     newperson = new Phone_node;
     int length = strlen(name);
     newperson->name = new char[length];
     strcpy(newperson->name, name);
-    newperson->phonenum = NULL;
+    length = strlen(lastname);
+    newperson->lastname = new char[length];
+    strcpy(newperson->lastname, lastname);
+    length = strlen(num);
+    newperson->phonenum = new char[length];
+    strcpy(newperson->phonenum, num);
     newperson->next = NULL;
     
     return newperson;
 };
-void List::create_number(char * name, char * phone, char * type){
-    Phone_node *traverse;
-    traverse = head;
-    
-    number *newnum = new number;
-    strcpy(newnum->num, phone);
-    strcpy(newnum->type, type);
-    newnum->next = NULL;
-    
-    while (traverse){
-        if (strncmp(name, traverse->name, strlen(traverse->name)) == 0)	break;
-        traverse = traverse->next;
-    }
-    
-    if (traverse->phonenum == NULL){
-        traverse->phonenum = newnum;
-    }
-    else{
-        newnum->next = traverse->phonenum;
-        traverse->phonenum = newnum;
-    }
-};
 
-void List::insert(char *newname){
+void List::insert(char *newname, char *newlastname, char *newphonenum){
     Phone_node *traverse, *behind, *newperson;
     number *newnum;
     traverse = head;
     behind = new Phone_node;
     
     if (head == NULL){									//first node being added
-        head = create_person(newname);
+        head = create_person(newname, newlastname, newphonenum);
         nodecount++;
         return;
     }
     if (strcmp(newname, head->name) < 0){				//Insert to head of list
-        newperson = create_person(newname);
+        newperson = create_person(newname, newlastname, newphonenum);
         newperson->next = head;
         head = newperson;
         nodecount++;
@@ -91,7 +66,7 @@ void List::insert(char *newname){
         traverse = traverse->next;
     }
     
-    newperson = create_person(newname);
+    newperson = create_person(newname, newlastname, newphonenum);
     if (traverse){													//Inserting new name in between
         newperson->next = traverse;
         behind->next = newperson;
@@ -101,20 +76,18 @@ void List::insert(char *newname){
     nodecount++;
 }
 
-void List::remove(char* deleted){
+void List::remove(Phone_node * deleted){
     Phone_node *traverse, *del, *back;
-    number *pn;
     traverse = head;
     back = head;
     del = NULL;
     
     while (traverse){
-        if (strncmp(deleted, traverse->name, strlen(deleted)) == 0){
+        if (strncmp(deleted->name, traverse->name, strlen(deleted->name)) == 0 && strncmp(deleted->lastname, traverse->lastname, strlen(deleted->lastname)) == 0){
             if (traverse == head){
                 head = traverse->next;
             }
             else{
-                
                 back->next = traverse->next;
             }
             del = traverse;
@@ -124,20 +97,12 @@ void List::remove(char* deleted){
         traverse = traverse->next;
     }
     if (del){
-        if (del->phonenum){
-            while (del->phonenum){
-                pn = del->phonenum;
-                del->phonenum = del->phonenum->next;
-                delete pn;
-            }
-        }
         delete del;
     }
 }
 
 Phone_node* List::search(char *target){
     Phone_node *traverse;
-    number *pn;
     int counter = 0;
     traverse = head;
     
@@ -148,20 +113,15 @@ Phone_node* List::search(char *target){
     
     while (traverse){
         counter ++;
-        pn = traverse->phonenum;
         if (all){
-            cout << counter << ". " << traverse -> name << endl;
-            while (pn){
-                cout << pn->type << " : " << pn->num << endl;
-                pn = pn->next;
-            }
+            cout << counter << ". " << traverse -> name << " " << traverse -> lastname << " " << traverse -> phonenum << endl;
         }
         else if (strncmp(target, traverse->name, strlen(target)) == 0){
             cout << "Record # : " << counter << endl;
             cout << "Name: " << traverse->name << endl;
-            if (traverse->phonenum != NULL){
-                cout << pn->type << " : " << pn->num << endl;
-            }
+            cout << "Last Name: " << traverse->lastname << endl;
+            cout << "Phone num: " << traverse->phonenum << endl;
+
             return traverse;
         }
         traverse = traverse->next;
@@ -169,17 +129,15 @@ Phone_node* List::search(char *target){
     return NULL;
 };
 
-int List::search2(char *target){
+int List::search2(char *target, char *targetlastname){
     Phone_node *traverse;
-    number *pn;
     int counter = 0;
     int found = 0;
     traverse = head;
     
     while (traverse){
         counter++;
-        pn = traverse->phonenum;
-        if (strncmp(target, traverse->name, strlen(traverse->name)) == 0){
+        if (strncmp(target, traverse->name, strlen(traverse->name)) == 0 && strncmp(targetlastname, traverse->lastname, strlen(traverse->lastname))){
             found++;
         }
         traverse = traverse->next;
@@ -187,11 +145,11 @@ int List::search2(char *target){
     return found;
 };
 
-void List::update(int num, char *newname){
+void List::update(int num, char *newname, char *newlastname){
     Phone_node *traverse;
-    number * temp = new number;
     int counter = 1;
     traverse = head;
+    char num = new char[30];
     
     for (int i = 0; i < num; i++){
         traverse = traverse->next;
@@ -199,23 +157,14 @@ void List::update(int num, char *newname){
     
     
     if (strcmp(traverse->name, newname) != 0){
-        temp = traverse->phonenum;
+        strcpy(num, traverse->num);
         remove(traverse->name);
-        insert(newname);
-    }
-    
-    traverse = head;
-    while (traverse){
-        if (strncmp(traverse->name, newname, strlen(newname)) == 0){
-            traverse->phonenum = temp;
-        }
-        traverse = traverse->next;
+        insert(newname, newlastname, num);
     }
 };
 
 void List::printList(){
     Phone_node *traverse;
-    number * pn;
     traverse = head;
     
     int counter = 1;
@@ -223,11 +172,8 @@ void List::printList(){
     while (traverse){
         cout << "\n" << "Record # " << counter << " : " << endl;
         cout << "Name : " << traverse->name << endl;
-        pn = traverse->phonenum;
-        while (pn){
-            cout << pn->type << " : " << pn->num << endl;
-            pn = pn->next;
-        }
+        cout << "Last Name : " << traverse->lastname << endl;
+        cout << "Phonen num : " << traverse->phonenum << endl;       
         traverse = traverse->next;
         counter++;
     }
