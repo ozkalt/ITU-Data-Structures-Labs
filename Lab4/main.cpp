@@ -45,7 +45,6 @@ void print_menu(){
     cout << "Choose an operation" << endl;
     cout << "S: Search Record" << endl;
     cout << "A: Add Record" << endl;
-    cout << "N: Add Number" << endl;
     cout << "U: Update Record" << endl;
     cout << "D: Delete Record" << endl;
     cout << "L: List Records" << endl;
@@ -62,9 +61,6 @@ bool operate(char choice){
             break;
         case 'A': case 'a':
             add_record();
-            break;
-        case 'N': case 'n':
-            add_number();
             break;
         case 'U': case 'u':
             update_record();
@@ -101,61 +97,21 @@ void search_record(){
 
 
 void add_record(){
-    char name[NAME_LENGTH], phone[PHONENUM_LENGTH], numtype[TYPE_LENGTH];		// numtype1[6] = { 'M', 'O', 'B', 'I', 'L', 'E' }, numtype2[6] = { 'W', 'O', 'R', 'K', '\0', '\0' }, numtype3[6] = { 'H', 'O', 'M', 'E', '\0', '\0' };
-    int numbertype;
+    char name[NAME_LENGTH], lastname[NAME_LENGTH], phone[PHONENUM_LENGTH];
     
     cout << "Please enter the information of the person you wish to save. " << endl;
     cout << "Name: ";
     cin.ignore(1000, '\n');
     cin.getline(name, NAME_LENGTH);
-    int validity = book.search2(name);
+    cout << "Last Name: ";
+    cin.getline(lastname, NAME_LENGTH);
+    int validity = book.search2(name, lastname);
     if (validity != 0){
         cout << "This name already exists!" << endl;
         return;
     }
-    book.insert(name);
+    book.insert(name, lastname, phone);
     cout << "Record has been added. " << endl;
-    getchar();
-};
-
-
-void add_number(){
-    char name[NAME_LENGTH], phone[PHONENUM_LENGTH], numtype[TYPE_LENGTH], numtype1[7] = { 'M', 'o', 'b', 'i', 'l', 'e', '\0' }, numtype2[7] = { 'W', 'o', 'r', 'k', '\0', '\0', '\0' }, numtype3[7] = { 'H', 'o', 'm', 'e', '\0', '\0', '\0' };
-    int numbertype;
-    
-    cout << "Please enter the information of the person you wish to save. " << endl;
-    cout << "Name: ";
-    cin.ignore(1000, '\n');
-    cin.getline(name, NAME_LENGTH);
-    int validity = book.search2(name);
-    if (validity == 0){
-        cout << endl << "There is no contact as " << name << endl << "Please try again..." << endl;
-        getchar();
-        return;
-    }
-    cout << "Phone Number: ";
-    cin.getline(phone, PHONENUM_LENGTH);
-    
-    cout << "Please Choose a Number Type: " << endl;
-    cout << "1. Mobile" << endl;
-    cout << "2. Work" << endl;
-    cout << "3. Home" << endl;
-    cout << "Please choose: {1, 2, 3}" << endl;
-    
-    cin >> numbertype;
-    
-    switch (numbertype){
-        case 1:
-            book.create_number(name, phone, numtype1);
-            break;
-        case 2:
-            book.create_number(name, phone, numtype2);
-            break;
-        case 3:
-            book.create_number(name, phone, numtype3);
-            break;
-    }
-    cout << "Number has been added. " << endl;
     getchar();
 };
 
