@@ -1,106 +1,123 @@
 #include<iostream>
 #include<stdio.h>
+#include<math.h>
 #include"header.h"
 
 using namespace std;
 
+int calculatePredence(char a){
+	switch (a){
+	case '(': case ')':
+		return 5;
+		break;
+	case '*':
+		return 4;
+		break;
+	case '/':
+		return 3;
+		break; 
+	case '+':
+		return 2;
+		break;
+	case '-':
+		return 1;
+		break;
+	}
+	return 0;
+}
+
 int main(){
 	char *argv = new char[100];
 	float value;
-	cout << "Enter the postfix string: ";
+	cout << "Enter the infix string: ";
 	cin.getline(argv, 100);
-	
+
 	char *infix = argv;
 	char *postfix = new char[100];
-	int pfindex = 0;
 
 	struct Stack operatorstack;
 	operatorstack.create();
 
+	int j = 0;
 	for (int i = 0; infix[i] != '\0'; i++){
-		if (infix[i] == '(')
-			operatorstack.push(infix[i]);
-		else if (infix[i] == '*')
-			operatorstack.push(infix[i]);
-		else if (infix[i] == '/'){
-			if (!operatorstack.isEmpty()){
-				while (operatorstack.getHeadChar() == '*'){
-					postfix[pfindex] = operatorstack.pop();
-					pfindex++;
-					if (operatorstack.isEmpty())	break;
-				}
-			}
-			operatorstack.push(infix[i]);
-		}
-		else if (infix[i] == '+'){
-			if (!operatorstack.isEmpty()){
-				while (operatorstack.getHeadChar() == '*' || operatorstack.getHeadChar() == '/'){
-					postfix[pfindex] = operatorstack.pop();
-					pfindex++;
-					if (operatorstack.isEmpty())	break;
-				}
-			}
-			operatorstack.push(infix[i]);
-		}
-		else if (infix[i] == '-'){
-			if (!operatorstack.isEmpty()){
-				if (operatorstack.getHeadChar() != '('){
-					while (operatorstack.getHeadChar() == '*' || operatorstack.getHeadChar() == '/' || operatorstack.getHeadChar() == '+'){
-						postfix[pfindex] = operatorstack.pop();
-						pfindex++;
-						if (operatorstack.isEmpty())	break;
-					}
-				}
-			}
-			operatorstack.push(infix[i]);
-		}
-		else if (infix[i] == ')'){
-			if (operatorstack.getHeadChar() == '('){
-				char buffer = operatorstack.pop();
-			}
+		if (infix[i] != '+' && infix[i] != '*' && infix[i] != '/' && infix[i] != '-' && infix[i] != ')' && infix[i] != '('){
+			postfix[j] = infix[i];
+			j++;
 		}
 		else{
-			postfix[pfindex] = infix[i];
-			pfindex++;
+			if (infix[i] == '(' && operatorstack.isEmpty()){
+				operatorstack.push(infix[i]);
+			}
+			else if (infix[i] == ')'){
+				while (operatorstack.getHeadChar() != '('){
+					postfix[j] = operatorstack.pop();
+					j++;
+				}
+				if (operatorstack.getHeadChar() == '('){
+					operatorstack.pop();
+				}
+			}
+			else if (calculatePredence(infix[i]) < calculatePredence(operatorstack.getHeadChar())){
+				if (operatorstack.getHeadChar() != '('){
+					postfix[j] = operatorstack.pop();
+					j++;
+				}
+				operatorstack.push(infix[i]);
+			}
+			else if (calculatePredence(infix[i]) >= calculatePredence(operatorstack.getHeadChar())){
+				operatorstack.push(infix[i]);
+			}
+			
+
 		}
 
-		postfix[pfindex] = '\0';
-		cout << "Postfix string: " << postfix << '\t';
-		operatorstack.print();
 	}
 
 	while (!operatorstack.isEmpty()){
-		postfix[pfindex] = operatorstack.pop();
-		pfindex++;
+		postfix[j] = operatorstack.pop();
+		j++;
 	}
+	postfix[j] = '\0';
 
-	postfix[pfindex] = '\0';
-	cout << "Postfix string: " << postfix << '\t';
+
+	cout << "Postfix string: " << postfix << endl;
 
 	operatorstack.makeEmpty();
 
-	int temp1, temp2;
-
-	for (int n = 0; postfix[n]; n++){
-		if (isdigit(postfix[n])){
-			operatorstack.push(postfix[n]);
+	int sayi1, sayi2, result;
+	char pop, push[10];
+	for (int i = 0; postfix[i] != '\0'; i++){
+		if (postfix[i] != '+' && postfix[i] != '*' && postfix[i] != '/' && postfix[i] != '-' && postfix[i] != ')' && postfix[i] != '('){
+			operatorstack.push(postfix[i]);
 		}
 		else{
-			temp1 = operatorstack.pop();
-			temp2 = operatorstack.pop();
+			pop = operatorstack.pop();
+			sayi1 = atoi(&pop);
+			pop = operatorstack.pop();
+			sayi2 = atoi(&pop);
 
-			if (postfix[n] == '+')
-				operatorstack.push(temp1 + temp2 + '0');
-			else if (postfix[n] == '-')
-				operatorstack.push(temp2 - temp1 + '0');
-			else if (postfix[n] == '*')
-				operatorstack.push(temp1 * temp2 + '0');
-			else if (postfix[n] == '/')
-				operatorstack.push(temp2 / temp1 + '0');
+			if (postfix[i] == '*'){
+				result = sayi1 * sayi2;
+			}
+			else if (postfix[i] == '/'){
+				result = sayi2 / sayi1;
+			}
+			else if (postfix[i] == '-'){
+				result = sayi2 - sayi1;
+			}
+			else if (postfix[i] == '+'){
+				result = sayi1 + sayi2;
+			}
+			
+			sprintf(push, "%d", result);
+			operatorstack.push(*push);
 		}
 	}
 
-	cout << "value: " << operatorstack.getHeadChar();
+	pop = operatorstack.pop();
+	result = atoi(&pop);
+
+	cout << "Value = " << result;
 
 	getchar();
 	return 0;
