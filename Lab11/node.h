@@ -1,6 +1,6 @@
 //
 //  node.h
-//  DS_Lab11_berk
+//  DS_Lab11
 //
 //  Created by Tuğba Özkal on 21.12.2016.
 //  Copyright © 2016 Tuğba Özkal. All rights reserved.
