@@ -7,6 +7,7 @@
 //
 
 #include <iostream>
+#include <time.h>
 
 #define N 7
 
@@ -68,12 +69,12 @@ int main() {
 void tree::createTree(){
     root = NULL;
     
+    srand(time(NULL));
     for (int i = 0; i < N; i++){
-        //srand(time_t(NULL));
         int t;
-        //t = rand() % N + 1;
-        cout << "Enter a number: ";
-        cin >> t;
+        t = rand() % N + 1;
+        //cout << "Enter a number: ";
+        //cin >> t;
         
         node * p = new node;
         p->number = t;
@@ -96,12 +97,11 @@ void tree::createTree(){
                     break;
                 }
                 else{
-                    int r = rand() % 2;
-                    if(r == 1){
-                        traverse = traverse->left;
-                    }
-                    else if(r == 0){
+                    if (findNumLeaf(traverse->left) > findNumLeaf(traverse->right)){
                         traverse = traverse->right;
+                    }
+                    else{
+                        traverse = traverse-left;
                     }
                 }
             }
